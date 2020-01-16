@@ -3,9 +3,6 @@ import models
 import settings
 
 
-def stop():
-    pass
-
 def play():
     """
     creating players
@@ -49,7 +46,6 @@ def main():
         pass
     finally:
         print('Goodbye')
-
 
 
 if __name__ == '__main__':

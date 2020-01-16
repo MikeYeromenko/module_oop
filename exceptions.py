@@ -1,4 +1,4 @@
-import models
+from datetime import datetime
 
 
 class GameOver(Exception):
@@ -6,6 +6,11 @@ class GameOver(Exception):
         self.txt = text
         self.score = kwargs.get('score')
         self.name = kwargs.get('name')
+        self.save_res()
+
+    def save_res(self):
+        with open('scores.txt', 'a') as source:
+            source.write(f'{self.name} {self.score} {datetime.strftime(datetime.now(), "%Y.%m.%d %H:%M:%S")}\n')
 
 
 class EnemyDown(Exception):

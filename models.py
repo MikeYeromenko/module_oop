@@ -85,9 +85,8 @@ class Player:
         """
         result = "You defenced successfully!"
         player_defence = 0
-        list_defences = ['1', '2', '3']
 
-        while not (list_defences.count(player_defence)):
+        while not (self.allowed_attacks.count(player_defence)):
             print('Choose your defence. Enter \n'
                   '1 for Wizard \n'
                   '2 for Warrior \n'
