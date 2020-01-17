@@ -26,11 +26,10 @@ class Enemy:
 
 
 class Player:
-    def __init__(self, name, allowed_attacks=['1', '2', '3']):
+    def __init__(self, name):
         self.name = name
         self.lives = settings.START_LIVES
         self.score = 0
-        self.allowed_attacks = allowed_attacks
 
     def decrease_lives(self):
         self.lives -= 1
@@ -49,6 +48,51 @@ class Player:
         self.score += delta
         return self.score
 
+    def verify_commands(self, command, **kwargs):
+        if command == 'show scores':
+            self.show_scores()
+        elif command == 'exit':
+            self.exit_func()
+        elif command == 'help':
+            self.help_func()
+        # elif command == 'start':
+        #     self.start_game(**kwargs)
+        return None
+
+    # def start_game(self, **kwargs):
+    #     self.lives = settings.START_LIVES
+    #     self.score = 0
+    #     kwargs['enemy_arg'].level = settings.START_ENEMY_LEVEL
+    #     kwargs['enemy_arg'].lives = settings.START_ENEMY_LEVEL
+    #     return None
+
+    @staticmethod
+    def help_func():
+        for element in settings.ListCommands:
+            print(element.value)
+        return None
+
+    def exit_func(self):
+        raise exceptions.GameOver('You stopped the game', score=self.score, name=self.name)
+
+    @staticmethod
+    def show_scores():
+        with open('scores.txt') as source:
+            print(source.read())
+        # return None
+
+    def choose_hero(self, action):
+        command = 0
+        while [var.value for var in settings.AllowedAttacks].count(command) < 1:
+            print(f'Choose your {action}. Enter \n'
+                  '1 for Wizard \n'
+                  '2 for Warrior \n'
+                  '3 for Bandit \n'
+                  'here: ', end='')
+            command = input()
+            self.verify_commands(command)
+        return command
+
     def attack(self, enemy_obj: Enemy):
         """
 
@@ -56,17 +100,8 @@ class Player:
         :return:
         """
         result = "You missed!"
-        player_attack = 0
-
-        while not (self.allowed_attacks.count(player_attack)):
-            print('Choose your attack. Enter \n'
-                  '1 for Wizard \n'
-                  '2 for Warrior \n'
-                  '3 for Bandit \n'
-                  'here: ', end='')
-            player_attack = input()
-
-        var_result = fight(player_attack, enemy_obj.select_attack())
+        player_attack = self.choose_hero('attack')
+        var_result = self.fight(player_attack, enemy_obj.select_attack())
 
         if var_result == 0:
             result = "It's a draw!"
@@ -84,17 +119,8 @@ class Player:
         :return:
         """
         result = "You defenced successfully!"
-        player_defence = 0
-
-        while not (self.allowed_attacks.count(player_defence)):
-            print('Choose your defence. Enter \n'
-                  '1 for Wizard \n'
-                  '2 for Warrior \n'
-                  '3 for Bandit \n'
-                  'here: ', end='')
-            player_defence = input()
-
-        result_attack = fight(enemy_obj.select_attack(), player_defence)
+        player_defence = self.choose_hero('defence')
+        result_attack = self.fight(enemy_obj.select_attack(), player_defence)
 
         if result_attack == 0:
             result = "It's a draw!"
@@ -104,18 +130,19 @@ class Player:
 
         return result
 
+    @staticmethod
+    def fight(attack, defense):
+        """
+        win if 1>2, 2>3, 3>1
+        :param attack:
+        :param defense:
+        :return:
+        """
+        result = -1
+        if attack == defense:
+            result = 0
+        elif (attack == '1' and defense == '2') or (attack == '2' and defense == '3') or (attack == '3' and defense == '1'):
+            result = 1
 
-def fight(attack, defense):
-    """
-    win if 1>2, 2>3, 3>1
-    :param attack:
-    :param defense:
-    :return:
-    """
-    result = -1
-    if attack == defense:
-        result = 0
-    elif (attack == '1' and defense == '2') or (attack == '2' and defense == '3') or (attack == '3' and defense == '1'):
-        result = 1
+        return result
 
-    return result

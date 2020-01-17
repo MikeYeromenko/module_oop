@@ -10,14 +10,14 @@ def play():
     """
     print("Please, enter your name: ", end='')
     name = input()
-    start = ''
-    while start != 'start':
-        print("To start game enter 'start' here: ", end='')
-        start = input()
-
-    level = 1
+    level = settings.START_ENEMY_LEVEL
     player = models.Player(name)
     enemy = models.Enemy(level)
+    command = ''
+    while command != 'start':
+        print("To start the game enter 'start' here: ", end='')
+        command = input()
+        player.verify_commands(command)
     while True:
         try:
             print(player.attack(enemy))

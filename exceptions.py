@@ -6,7 +6,9 @@ class GameOver(Exception):
         self.txt = text
         self.score = kwargs.get('score')
         self.name = kwargs.get('name')
-        self.save_res()
+        print(self.txt)
+        if self.score > 0:
+            self.save_res()
 
     def save_res(self):
         with open('scores.txt', 'a') as source:
